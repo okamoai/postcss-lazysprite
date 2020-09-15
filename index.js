@@ -410,11 +410,11 @@ function runSpriteSmith(images, options) {
 
 				// Get data from cache (avoid spritesmith)
 				if (cache[checkString]) {
-					var deferred = Promise.pending();
-					var results = cache[checkString];
-					results.isFromCache = true;
-					deferred.resolve(results);
-					return deferred.promise;
+					return new Promise(function(resolve) {
+						var results = cache[checkString];
+						results.isFromCache = true;
+						resolve(results);
+					});
 				}
 
 				// SVG SPRITES MOD.
@@ -536,13 +536,13 @@ function saveSprites(images, options, sprites) {
 			.chain(sprites)
 			.map(function (sprite) {
 				sprite.path = makeSpritePath(options, sprite.groups);
-				var deferred = Promise.pending();
 
 				// If this file is up to date
 				if (sprite.isFromCache) {
-					log(options.logLevel, 'lv3', ['Lazysprite:', colors.yellow(path.relative(process.cwd(), sprite.path)), 'unchanged.']);
-					deferred.resolve(sprite);
-					return deferred.promise;
+					return new Promise(function(resolve) {
+						log(options.logLevel, 'lv3', ['Lazysprite:', colors.yellow(path.relative(process.cwd(), sprite.path)), 'unchanged.']);
+						resolve(sprite);
+					});
 				}
 
 				// Save new file version
